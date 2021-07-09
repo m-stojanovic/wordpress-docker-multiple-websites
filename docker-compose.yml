@@ -1,0 +1,561 @@
+version: '3'
+
+services:
+    nginx-proxy:
+        image: jwilder/nginx-proxy
+        container_name: nginx-proxy
+        ports:
+            - "80:80"
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+    wp_db:
+        container_name: wpdb
+        image: mysql:latest
+        ports:
+        - ${IP}:3306:3306
+        command: '--default_authentication_plugin=mysql_native_password'
+        volumes:
+            - ./databases:/docker-entrypoint-initdb.d
+            - wp_db_data:/var/lib/mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    phpmyadmin:
+        container_name: phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        environment:
+            PMA_HOST: wp_db
+            PMA_PORT: 3306
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+        ports:
+            - 8080:80
+        links:
+            - wp_db:wp_db
+    ceu-wp:
+        container_name: ceu-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/ceu:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${CEU_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "ceu.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    cwa-wp:
+        container_name: cwa-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/cwa:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${CWA_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "cwa.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    cwp-wp:
+        container_name: cwp-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/cwp:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${CWP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "cwp.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    eeu-wp:
+        container_name: eeu-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/eeu:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${EEU_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "eeu..domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy      
+    ewa-wp:
+        container_name: ewa-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/ewa:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${EWA_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "ewa.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy   
+    ewp-wp:
+        container_name: ewp-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/ewp:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${EWP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "ewp.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy   
+    gap-wp:
+        container_name: gap-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/gap:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${GAP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "gap.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    geu-wp:
+        container_name: geu-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/geu:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${GEU_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "geu.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy 
+    gip-wp:
+        container_name: gip-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/gip:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${GIP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "gip.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    gwp-wp:
+        container_name: gwp-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/gwp:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${GWP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "gwp.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    gwt-wp:
+        container_name: gwt-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/gwt:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${GWT_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "gwt.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    iap-wp:
+        container_name: iap-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/iap:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${IAP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "iap.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    ieu-wp:
+        container_name: ieu-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/ieu:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${IEU_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "ieu.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    iip-wp:
+        container_name: iip-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/iip:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${IIP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "iip.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    iweu-wp:
+        container_name: iweu-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/iweu:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${IWEU_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "iweu.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    iwp-wp:
+        container_name: iwp-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/iwp:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${IWP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "iwp.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    lap-wp:
+        container_name: lap-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/lap:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${LAP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "lap.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    leu-wp:
+        container_name: leu-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/leu:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${LEU_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "leu.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    lip-wp:
+        container_name: lip-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/lip:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${LIP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "lip.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    lwp-wp:
+        container_name: lwp-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/lwp:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${LWP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "lwp.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    lwt-wp:
+        container_name: lwt-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/lwt:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${LWT_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "lwt.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    map-wp:
+        container_name: map-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/map:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${MAP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "map.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    meu-wp:
+        container_name: meu-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/meu:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${MEU_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "meu.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    mip-wp:
+        container_name: mip-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/mip:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${MIP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "mip.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    mwp-wp:
+        container_name: mwp-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/mwp:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${MWP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "mwp.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    mwt-wp:
+        container_name: mwt-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/mwt:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${MWT_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "mwt.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    seu-wp:
+        container_name: seu-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/seu:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${SEU_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "seu.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    swa-wp:
+        container_name: swa-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/swa:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${SWA_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "swa.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+    swp-wp:
+        container_name: swp-wp
+        image: wordpress:latest
+        restart: always
+        expose:
+            - 80
+        volumes:
+            - ./web_data/swp:/var/www/html/
+            - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+        environment:
+            WORDPRESS_DB_HOST: wp_db
+            WORDPRESS_DB_NAME: "${SWP_DB_NAME}"
+            WORDPRESS_DB_USER: "${WORDPRESS_USER}"
+            WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASS}"
+            VIRTUAL_HOST: "swp.domain.com"
+        depends_on:
+            - wp_db
+            - nginx-proxy
+networks:
+  default:
+    external:
+      name: nginx-proxy
+volumes:
+    wp_db_data:
